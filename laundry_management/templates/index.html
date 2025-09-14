@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundry Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            color: rgb(55 65 81);
+            background-color: #F3F4F6;
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: rgb(59 130 246);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .btn-primary {
+            background-color: rgb(37 99 235);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: rgb(29 78 216);
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            overflow: hidden;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .table-cell { 
+            padding: 0.75rem 1rem;
+        }
+        .table-header { 
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 500;
+            color: rgb(107 114 128);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .quantity-input {
+            border: none;
+            outline: none;
+            box-shadow: none;
+            color: rgb(55 65 81);
+        }
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .quantity-input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Auth Container -->
+    <div id="auth-container" class="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+        <div class="w-full max-w-5xl mx-auto lg:grid lg:grid-cols-2 rounded-2xl shadow-2xl overflow-hidden bg-white">
+            <!-- Branding Column -->
+            <div class="hidden lg:flex flex-col items-center justify-center p-12 bg-blue-600 text-white text-center">
+                 <div class="mb-6">
+                    <i data-lucide="washing-machine" class="w-24 h-24"></i>
+                </div>
+                <h1 class="text-4xl font-bold mb-3">Welcome to LaundryPro</h1>
+                <p class="text-blue-200">Your one-stop solution for hassle-free laundry management.</p>
+            </div>
+            
+            <!-- Form Column -->
+            <div class="p-8 md:p-12">
+                <!-- Login Form -->
+                <form id="login-form" class="fade-in">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-2">Client Login</h2>
+                            <p class="text-gray-500">Welcome back! Please enter your details.</p>
+                        </div>
+                        <a href="/admin" class="text-sm font-semibold text-gray-600 hover:text-blue-600 border px-3 py-1.5 rounded-md hover:border-blue-500 transition-colors flex items-center gap-2">
+                            <i data-lucide="user-cog" class="w-4 h-4"></i>
+                            Admin
+                        </a>
+                    </div>
+                    <div id="login-error" class="text-red-500 text-center mb-4 h-5 text-sm"></div>
+                    <div class="space-y-5">
+                        <input type="text" id="login-username" class="form-input" placeholder="Username" required>
+                        <input type="password" id="login-password" class="form-input" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full text-lg mt-8">
+                        <span id="login-button-text">Login</span>
+                        <span id="login-spinner" class="hidden animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full"></span>
+                    </button>
+                    <p class="text-sm text-center text-gray-500 mt-6">
+                        Don't have an account? <a href="#" id="show-register-form" class="font-semibold text-blue-600 hover:underline">Register here</a>
+                    </p>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="hidden fade-in">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
+                    <p class="text-gray-500 mb-6">Get started with our laundry service.</p>
+                    <div id="register-error" class="text-red-500 text-center mb-4 h-5 text-sm"></div>
+                     <div class="space-y-5">
+                        <input type="text" id="register-username" class="form-input" placeholder="Username" required>
+                        <input type="email" id="register-email" class="form-input" placeholder="Email Address" required>
+                        <input type="password" id="register-password" class="form-input" placeholder="Password" required>
+                        <input type="password" id="register-confirm-password" class="form-input" placeholder="Confirm Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full text-lg mt-8">
+                        <span id="register-button-text">Register</span>
+                         <span id="register-spinner" class="hidden animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full"></span>
+                    </button>
+                    <p class="text-sm text-center text-gray-500 mt-6">
+                        Already have an account? <a href="#" id="show-login-form" class="font-semibold text-blue-600 hover:underline">Login here</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app-container" class="hidden">
+        <header class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="washing-machine" class="w-8 h-8 text-blue-600"></i>
+                    <h1 class="text-2xl font-bold text-blue-600">LaundryPro</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm text-gray-600">Welcome,</p>
+                        <p id="user-id" class="text-md font-semibold"></p>
+                    </div>
+                    <button id="logout-button" title="Logout" class="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-red-600 transition-colors">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 md:p-6">
+            <div class="flex space-x-4 mb-6 border-b">
+                <button id="nav-new-order" class="py-2 px-4 font-semibold border-b-2 border-blue-600 text-blue-600">New Order</button>
+                <button id="nav-history" class="py-2 px-4 font-semibold text-gray-500 border-b-2 border-transparent hover:border-gray-300 transition-colors">Order History</button>
+            </div>
+            
+            <!-- New Order Section -->
+            <section id="new-order-section">
+                <div class="max-w-3xl mx-auto">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold mb-4">Place a New Order</h2>
+                        <form id="new-order-form">
+                            <div id="clothing-items" class="space-y-3">
+                                <!-- Items will be dynamically added here by JS -->
+                            </div>
+                            <div class="flex justify-between items-center mt-6 border-t pt-4">
+                               <button type="button" id="add-custom-item" class="text-sm font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                    Add Custom Item
+                                </button>
+                                <div class="text-right">
+                                    <span class="text-gray-600">Total Items:</span>
+                                    <span id="total-items-count" class="font-bold text-lg">0</span>
+                                </div>
+                            </div>
+                             <button type="submit" id="submit-order-button" class="btn btn-primary w-full mt-6 text-lg">
+                                <span id="submit-order-text">Submit Order</span>
+                                <span id="submit-order-spinner" class="hidden animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full"></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history-section" class="hidden">
+                 <div class="card">
+                     <div class="overflow-x-auto">
+                         <table class="w-full text-sm">
+                             <thead class="bg-gray-50">
+                                 <tr>
+                                     <th class="table-header">Order ID</th>
+                                     <th class="table-header">Date</th>
+                                     <th class="table-header">Total Items</th>
+                                     <th class="table-header">Status</th>
+                                     <th class="table-header">Items</th>
+                                 </tr>
+                             </thead>
+                             <tbody id="history-table-body">
+                                <tr id="history-spinner-row" class="hidden">
+                                     <td colspan="5" class="text-center py-10">
+                                         <div class="flex justify-center items-center gap-2 text-gray-500">
+                                             <div class="animate-spin h-5 w-5 border-t-2 border-r-2 border-blue-500 rounded-full"></div>
+                                             <span>Loading History...</span>
+                                         </div>
+                                     </td>
+                                 </tr>
+                                 <!-- History rows will be dynamically added here -->
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Notification Modal -->
+    <div id="notification-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center fade-in">
+            <p id="modal-message" class="mb-4"></p>
+            <button id="modal-close" class="btn btn-primary">Close</button>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+
