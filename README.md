@@ -1,4 +1,4 @@
-#Laundry Management System
+# Laundry Management System
 
 
 A full-stack web application for managing laundry orders. This system provides a seamless experience for both customers and administrators, featuring a separate client portal for placing orders and a secure admin dashboard for managing them.
